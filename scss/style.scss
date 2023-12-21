@@ -1,0 +1,14 @@
+@import "mixins.scss";
+@import "variables.scss";
+@import "settings.scss";
+@import "flex.scss";
+@import "grid.scss";
+
+/*
+Hogyan kell azt megoldani, hogy ne kelljen mindig beírni a terminálba, hogy sass valami.scss valami.css
+és rengetegszer lefutatni a fordítást, hanem figyelje a változásokat maga a fordító ->
+sass -w scss/style.scss style/style.css
+
+sass után be kell írni -w(watch) és utána megadtuk neki hogy, az scss mappában lévő style.scss-t (ide van beimportálva minden más scss is)
+fordítsa le egy style mappában lévő style.css-re amit csinál a fordítás után
+*/

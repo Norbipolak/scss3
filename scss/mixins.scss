@@ -1,0 +1,42 @@
+@mixin loopProperties($from, $to, $step, $prop, $className, $unit:px) {
+    @while($from <= $to) { /*amíg a from kisebb vagy egyenlő mint a to, addig a from-hoz hozzáadjuk a step-et */
+        .#{$className}-#{$from} {
+            #{$prop}:#{$from}#{$unit};/*amig a from kisebb vagy egyenlő mint a to, addig generál a while-ban megadott formában 
+            és a meghívásnál megadott értékekkel css tulajdonságokat */
+        }
+        $from:$from+$step; /*nincs olyan, hogy += illetve : az értékadó operátor*/
+    }
+}
+
+/*
+$from -> hogy mettöl
+$to -> hogy meddig
+$step -> hogy mekkora lépésekben
+$prop -> hogy, miről készitettük ezt az egész mixin-t pl.margin, padding, background-color
+$className -> ha átvisszük ezket az adatokat a css-be akkor mi legyen a class-nak a neve (tetszöleges megadható, mondjuk padding -> p)
+$unit -> amit átviszünk értéket, annak mi legyen a mértékegysége (százalék, pixel, stb.), 
+:px, meg lehet adni a unitnak egy alapértelmezett értéket, hogy pixel pl.
+*/
+
+/*
+minden amit itt csinálunk azt a style.sccs behívjuk és ott adjuk ét neki az értékeket
+ugyanugy, mint egy függvénymeghívásnál -> ehhez importálunk minden scss fájlt style.scss-en
+*/
+
+/*a settingsben készített display lista alapján itt csinálunk neki egy listProperties-t*/
+
+@mixin listProperties($list, $prop, $className) {
+    @each $el in $list {
+        .#{$className}-#{$el} {
+            #{$prop}:#{$el};
+        }
+    }
+}
+
+@mixin mapProperties($map, $prop, $className) {
+    @each $key, $value in $map {
+        .#{$className}-#{$key} {
+            #{$prop}:#{$value};
+        }
+    }
+}

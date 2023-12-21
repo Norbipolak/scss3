@@ -1,0 +1,60 @@
+@for $i from 2 through 12 {
+    .grid-#{$i}-xl {
+        display:grid;
+        grid-template-columns: repeat($i, 1fr);
+    }
+    @media screen and (max-width:map-get($sizes, "width-lg")){
+        display: block; /*1280px-nél bemennek a gridek egymás alá*/
+    }
+
+    .grid-#{$i}-lg {
+        display:grid;
+        grid-template-columns: repeat($i, 1fr);
+    }
+    @media screen and (max-width:map-get($sizes, "width-md")){
+        display: block; /*md-nél mennek be a gridek egymás alá*/
+    }
+
+    .grid-#{$i}-md {
+        display:grid;
+        grid-template-columns: repeat($i, 1fr);
+    }
+    @media screen and (max-width:map-get($sizes, "width-sm")){
+        display: block; /*sm-nél (720px)mennek be a gridek egymás alá*/
+    }
+
+    .grid-#{$i}-sm {
+        display:grid;
+        grid-template-columns: repeat($i, 1fr);
+    }
+    @media screen and (max-width:map-get($sizes, "width-xs")){
+        display: block; /*sm-nél (720px)mennek be a gridek egymás alá*/
+    }
+
+    .grid-#{$i}-xs {
+        display:grid;
+        grid-template-columns: repeat($i, 1fr);
+    
+        /*amelyek soha nem mennek be egymás alá*/
+}
+}
+/*
+Olyan grid-rendszer, amely egyforma méretű oszlopokra osztja a rendelkezésre álló területet
+
+.grid-9-lg {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+}
+
+létrehozunk az index.html-ben egy div-et, amelyiknek megadunk egy grid-et classban, pl.grid-2-lg
+és ebben a divben csinálunk még kettő div-et class bg-primary-val és egy padding-vel
+    <div class="grid-2-lg m-25">
+        <div class="bg-primary p-xl"></div>
+        <div class="bg-secondary p-xl"></div>
+    </div>
+*/
+
+/*
+most grid-3-md van beállítva 720px, így tudjuk azt szabályozni, hogy ezek a sávok milyen szélsesen maradjanak 
+a legkisebb nézetben, ahol még nem mennek be egymás alá, és ha valami nem férne ki, akkor rakhatjuk egy nagyobba 
+*/

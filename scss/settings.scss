@@ -1,0 +1,239 @@
+* {
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+@include loopProperties(5, 50, 5, margin, "m");
+
+/*
+include
+amikor meghívunk egy függvényt (másik oldalról akkor kell az include) 
+itt megadjuk a függvénynek azokat a paraméterek, ami alapján legenerál a loopProperties 
+a mixins LoopProperties függvényben megadott szabályok alapján css tulajdonságokat
+*/
+/*
+nyomunk egy control-s-t a terminálba és mivel, hogy be van hívva a style.scss-ben a settings.scss,
+ezért már fordítja is bele -> ezért amit ide irok azt azonnal fordítja a style.css-be, szóval ott
+figyelmen kivül kell hagyni azokat amit oda van kommentelve
+
+.m-15 {
+  margin: 15px;
+}
+->
+így fog kinézni style.css-ben, kaptunk 10db ilyet m-5 től m-50-ig (10, 15, 20 stb. 5-vel emelkedve, mert 5 step paraméternek) 
+nem írtuk a függvény meghívásakor a unit-ra semmit, mert :px, alapból megadja a px-t de ha viszont 
+százalékot szeretnénk, akkor a függvény meghívásakor be kell írni, mint paramétert
+
+a mixinsben lévő loopPropeties függvényünk alapján 
+->
+*/
+
+@include loopProperties(5, 50, 5, padding, "p");
+/*
+.p-50 {
+  padding: 50px;
+}
+*/
+@include loopProperties(10, 100, 10, width, "w", "%");
+/*
+itt már meg kellett adni a %-ot, mert nem px-ben akarjuk megkapni a width-et
+legenerált 10-et width: 10-100%-ig a style.css-ben 
+pl. az első ez lesz -> 
+.w-10 {
+  width: 10%;
+}
+*/
+@include loopProperties(50, 1500, 50, max-width, "mw");
+/*
+.mw-500 {
+  max-width: 500px;
+}
+*/
+
+/**********************************************************************************************************************************/
+
+/*csinálunk egy listát display fajtákról*/
+
+$displays:inline, inline-block, block, flex, grid, table, table-cell;
+
+/*azt szeretnénk, hogy minden egyes display-re legyen egy külön osztály -> egy each ciklussal*/
+
+@each $display in $displays {
+    .d-#{$display} {
+        display:$display;
+    }
+}
+
+/*
+.d-grid {
+  display: grid;
+}
+*/
+/*
+ezt megoldjuk a display-eket egy mixins-ben -> mixins.scss
+de mivel itt a lista az egy paramétere a listProperties függvényünknek, amit csináltunk a 
+a mixins-ben, nem csak a display listánkra lesz jó, hanem bármilyenre, amit készítünk és 
+azt a listát adjuk meg a listPropertiesnek a paramétereként
+függvény meghívása
+*/
+@include listProperties($displays, display, "d");
+/*ugyanazt kaptunk vissza, mint az elöbb, a for-val de csinálunk egy másik listát is*/
+$positions:static, relative, absolute, fixed, sticky;
+
+@include listProperties($positions, position, "pos");
+/*
+.pos-relative {
+  position: relative;
+}
+meg van az összes poziciónk ilyen formában a style.css-ben
+*/
+
+/****************************************************************************************************************************************/
+
+/*
+Csinálunk háttereket, variables.css-ben ehhez el vannak mentve színek egy colors nevű map-ban
+Mindegyik color ami a colorsban van csinálunk egy listát
+*/
+
+@each $key, $color in $colors {
+    .bg-#{$key} {
+        background-color: #{$color};
+    }
+}
+/*
+mivel a colors mapben kulcs-értékpárjaink vannak kulcs(key) - primary, secondary stb. 
+value(color) azt meg megadjuk értékként a background-colornak 
+-> 
+.bg-secondary-darker {
+  background-color: #d87e00;
+}
+
+ezt is lehet automatizálni, modnjuk, hogy ne csak a color mapre lehessen használni
+meghívjuk a mxxinsben elkészített mapProperties függvényt
+*/
+
+@include mapProperties($colors, background-color, "bg");
+@include mapProperties($colors, color, "color");
+
+/*van egy sizes mapunk a variablesben -> létrehozunk neki containereket, hogyha behuzzik a képernyőt jobbról balra,
+akkor más pixelt kapjon ami ott lesz pl. egy grid -> media screen */
+
+/*size-nak csinálunk containereket*/
+
+.container-lg {
+    width:map-get($sizes, "width-lg");
+    margin:auto; /*hogy középen legyen*/
+
+    @media screen and (max-width:1280px) {
+        width:map-get($sizes, "width-md");
+    }
+
+    @media screen and (max-width:1080px) {
+        width:map-get($sizes, "width-sm");
+    }
+
+    @media screen and (max-width:720px) {
+        width:map-get($sizes, "width-xs");
+    }
+
+    @media screen and (max-width:640px) {
+        width:map-get($sizes, "100%");
+    }
+}
+
+/*
+index-html-en a példa, hogyan néz ez ki a böngészőben
+ahol csinálunk egy div-et, aminek megadjuk class-nak az itt elkészített containert
+meg egy p-10-es paddinget és egy bg-t
+*/
+.p-xl {
+    padding:max(3vw, map-get($spaces,"xl"));
+}
+
+/*
+vw -> a rendelkzésre álló látható szélesség
+1.5vw és 25(space-xl) közötti maximun
+a p-10 amit megadtunk a div-nek kicseréljük erre és
+ez azért jó, hogy így adtuk meg, mert ha huzzuk össze a képernyőt egyre kisebb lesz a vw
+a padding egyre kisebb lesz, de csak addig megy az össze, ameddig nem lesz 25px
+mert vw egy idő után kisebb lesz, mint 25px, hiszen a widthnek (3vw) a 3%-a az kisebb 
+lesz mint 25px és akkor a nagyobbat fogja választani, mert az a max
+The width of the viewport (the visible area of the web page in the browser window) is 1000 pixels, 
+then 3vw would be equivalent to 30 pixels (3% of 1000 pixels) 
+-> 
+nagyobb készülékeken nagyobb padding van, kisebb készülékeken, pedig nem foglalja annyira a helyet 
+*/
+.p-lg {
+    padding:max(2vw, map-get($spaces,"lg"));
+}
+/*
+style.ccs-ben 
+.p-lg {
+  padding: max(2vw, 20px);
+}
+
+itt már alapból kisebb paddinggel kezdi és lemegy a végén 20px-re
+*/
+.p-md {
+    padding:max(1.5vw, map-get($spaces,"md"));
+}
+.p-sm {
+    padding:max(1vw, map-get($spaces,"sm"));
+}
+/*
+p-sm-nél is lesz hatással, mert 1vw a 14.87px teljes képernyőnél és 10px-ig fog bemenni 
+ha huzzuk be akkor ameddig a teljes képernyőszélesség 1%-a az nagyobb lesz mint 10px, akkor 
+addig annyi lesz a padding utána meg 10px, mert annyi a space-sm  és az lesz a nagyobb tehát a max
+*/
+
+/*
+a variablesben kiszedtük a space-ket a sizes mapból és csináltunk neki egy map-ot spaces néven
+és a spaceket a mapProperties-vel automatizáljuk 
+*/
+@include mapProperties($spaces, padding, "p");
+
+/*
+style.css-ben
+.p-sm {
+  padding: 10px;
+}
+
+.p-md {
+  padding: 15px;
+}
+*/
+/*
+grid.css-ben megcsináljuk a grid rendszert 
+*/
+
+/*a feletti padding (p) mintára csinálunk egy ugyanolyat marginnal és grid-gap-vel*/
+.m-xl {
+    margin:max(3vw, map-get($spaces,"xl"));
+}
+
+.m-lg {
+    margin:max(2vw, map-get($spaces,"lg"));
+}
+
+.m-md {
+    margin:max(1.5vw, map-get($spaces,"md"));
+}
+.m-sm {
+    margin:max(1vw, map-get($spaces,"sm"));
+}
+
+.gap-xl {
+    grid-gap:max(3vw, map-get($spaces,"xl"));
+}
+
+.gap-lg {
+    grid-gap:max(2vw, map-get($spaces,"lg"));
+}
+
+.gap-md {
+    grid-gap:max(1.5vw, map-get($spaces,"md"));
+}
+.gap-sm {
+    grid-gap:max(1vw, map-get($spaces,"sm"));
+}
